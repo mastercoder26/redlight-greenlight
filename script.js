@@ -29,3 +29,15 @@ let attempts = Number(localStorage.getItem("rlgl_attempts") || 0);
 
 bestValue.textContent = best + "%";
 attemptsValue.textContent = attempts;
+
+// ---------- log ticker ----------
+
+function logLine(text, tone) {
+  const p = document.createElement("p");
+  const t = new Date();
+  const stamp = String(t.getMinutes()).padStart(2, "0") + ":" + String(t.getSeconds()).padStart(2, "0");
+  p.textContent = "[" + stamp + "] " + text;
+  if (tone) p.className = tone;
+  log.appendChild(p);
+  log.scrollTop = log.scrollHeight;
+}
