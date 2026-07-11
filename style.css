@@ -353,3 +353,19 @@ kbd {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
 }
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 380px) {
+  .poster {
+    padding: 16px 14px 20px;
+  }
+
+  .poster__head h1 {
+    font-size: 21px;
+  }
+
+  .stamp {
+    font-size: 26px;
+  }
+}
