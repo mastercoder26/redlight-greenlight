@@ -58,7 +58,7 @@ function setLight(next) {
   signal.classList.toggle("is-green", next === "green");
   signal.classList.toggle("is-red", next === "red");
   signalText.textContent = next === "green" ? "RUN" : "STOP";
-  doll.classList.toggle("is-facing", next === "green");
+  doll.classList.toggle("is-watching", next === "red");
   playTone(next === "green" ? 660 : 220);
   logLine(next === "green" ? "Light turns GREEN." : "Light turns RED. Freeze!");
 
