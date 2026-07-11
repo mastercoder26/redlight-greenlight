@@ -41,3 +41,44 @@ function logLine(text, tone) {
   log.appendChild(p);
   log.scrollTop = log.scrollHeight;
 }
+
+// ---------- light scheduler ----------
+// Flips between green/red on a random interval and fires a grace-period
+// check whenever it switches to red, so a held key isn't punished instantly.
+
+let lightTimer = null;
+let graceTimer = null;
+
+function randomDuration() {
+  return 1200 + Math.random() * 2600; // 1.2s - 3.8s
+}
+
+function setLight(next) {
+  light = next;
+  signal.classList.toggle("is-green", next === "green");
+  signal.classList.toggle("is-red", next === "red");
+  signalText.textContent = next === "green" ? "RUN" : "STOP";
+  doll.classList.toggle("is-facing", next === "green");
+  playTone(next === "green" ? 660 : 220);
+  logLine(next === "green" ? "Light turns GREEN." : "Light turns RED. Freeze!");
+
+  if (next === "red") {
+    clearTimeout(graceTimer);
+    graceTimer = setTimeout(() => {
+      if (holding && running) eliminate("You moved on red.");
+    }, GRACE_MS);
+  }
+}
+
+function scheduleNextLight() {
+  clearTimeout(lightTimer);
+  lightTimer = setTimeout(() => {
+    setLight(light === "green" ? "red" : "green");
+    scheduleNextLight();
+  }, randomDuration());
+}
+
+function stopScheduler() {
+  clearTimeout(lightTimer);
+  clearTimeout(graceTimer);
+}
