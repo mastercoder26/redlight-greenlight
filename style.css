@@ -34,3 +34,58 @@ kbd {
   background: #fff;
   box-shadow: 2px 2px 0 var(--ink);
 }
+
+/* ---------- poster ---------- */
+
+.poster {
+  position: relative;
+  width: 420px;
+  max-width: 100%;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  padding: 22px 22px 26px;
+  transform: rotate(-0.4deg);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.18);
+}
+
+.poster::before,
+.poster::after {
+  content: "";
+  position: absolute;
+  width: 46px;
+  height: 22px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+.poster::before {
+  top: -12px;
+  left: 24px;
+  transform: rotate(-6deg);
+}
+
+.poster::after {
+  top: -12px;
+  right: 30px;
+  transform: rotate(4deg);
+}
+
+.poster__head {
+  text-align: center;
+  border-bottom: 2px dashed var(--ink);
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+.poster__head h1 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: 1px;
+}
+
+.poster__sub {
+  margin: 8px 0 0;
+  font-size: 12px;
+  opacity: 0.75;
+}
