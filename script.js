@@ -1,16 +1,8 @@
 // ---------- refs ----------
 
-const stage = document.getElementById("stage");
-const doll = document.getElementById("doll");
-const signal = document.getElementById("signal");
-const signalText = document.getElementById("signalText");
+const lightEl = document.getElementById("light");
 const runner = document.getElementById("runner");
-const distanceValue = document.getElementById("distanceValue");
-const bestValue = document.getElementById("bestValue");
-const attemptsValue = document.getElementById("attemptsValue");
-const log = document.getElementById("log");
-const overlay = document.getElementById("overlay");
-const stamp = document.getElementById("stamp");
+const stats = document.getElementById("stats");
 const startBtn = document.getElementById("startBtn");
 
 // ---------- state ----------
@@ -19,35 +11,25 @@ const SPEED = 26;          // % of track per second while running
 const GRACE_MS = 220;      // ms of leniency after light turns red
 const WIN_DISTANCE = 100;  // %
 
-let light = "red";         // "red" | "green"
+let light = "red";
 let holding = false;
-let running = false;       // is a round currently in progress
+let running = false;
 let distance = 0;
 let lastFrame = 0;
 let best = Number(localStorage.getItem("rlgl_best") || 0);
 let attempts = Number(localStorage.getItem("rlgl_attempts") || 0);
 
-bestValue.textContent = best + "%";
-attemptsValue.textContent = attempts;
+let lightTimer = null;
+let graceTimer = null;
 
-// ---------- log ticker ----------
+updateStats();
 
-function logLine(text, tone) {
-  const p = document.createElement("p");
-  const t = new Date();
-  const timestamp = String(t.getMinutes()).padStart(2, "0") + ":" + String(t.getSeconds()).padStart(2, "0");
-  p.textContent = "[" + timestamp + "] " + text;
-  if (tone) p.className = tone;
-  log.appendChild(p);
-  log.scrollTop = log.scrollHeight;
+function updateStats() {
+  stats.textContent =
+    "distance: " + Math.floor(distance) + "%   best: " + best + "%   attempts: " + attempts;
 }
 
 // ---------- light scheduler ----------
-// Flips between green/red on a random interval and fires a grace-period
-// check whenever it switches to red, so a held key isn't punished instantly.
-
-let lightTimer = null;
-let graceTimer = null;
 
 function randomDuration() {
   return 1200 + Math.random() * 2600; // 1.2s - 3.8s
@@ -55,17 +37,14 @@ function randomDuration() {
 
 function setLight(next) {
   light = next;
-  signal.classList.toggle("is-green", next === "green");
-  signal.classList.toggle("is-red", next === "red");
-  signalText.textContent = next === "green" ? "RUN" : "STOP";
-  doll.classList.toggle("is-watching", next === "red");
+  lightEl.textContent = next === "green" ? "GREEN LIGHT" : "RED LIGHT";
+  lightEl.classList.toggle("green", next === "green");
   playTone(next === "green" ? 660 : 220);
-  logLine(next === "green" ? "Light turns GREEN." : "Light turns RED. Freeze!");
 
   if (next === "red") {
     clearTimeout(graceTimer);
     graceTimer = setTimeout(() => {
-      if (holding && running) eliminate("You moved on red.");
+      if (holding && running) eliminate("you moved during red light");
     }, GRACE_MS);
   }
 }
@@ -90,20 +69,15 @@ window.addEventListener("keydown", (e) => {
   e.preventDefault();
   if (holding) return;
   holding = true;
-  stage.classList.add("is-holding");
 
   if (!running) return;
-
-  if (light === "red") {
-    eliminate("You took off during red.");
-  }
+  if (light === "red") eliminate("you took off on red");
 });
 
 window.addEventListener("keyup", (e) => {
   if (e.code !== "Space") return;
   e.preventDefault();
   holding = false;
-  stage.classList.remove("is-holding");
 });
 
 // ---------- main loop ----------
@@ -117,7 +91,7 @@ function frame(now) {
   if (holding && light === "green") {
     distance = Math.min(WIN_DISTANCE, distance + SPEED * dt);
     runner.style.left = distance + "%";
-    distanceValue.textContent = Math.floor(distance) + "%";
+    updateStats();
 
     if (distance >= WIN_DISTANCE) {
       win();
@@ -128,7 +102,7 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-// ---------- sound (tiny WebAudio beeps, no assets) ----------
+// ---------- sound ----------
 
 let audioCtx = null;
 
@@ -145,7 +119,7 @@ function playTone(freq) {
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
     osc.stop(audioCtx.currentTime + 0.2);
   } catch (err) {
-    // audio isn't essential, fail silently
+    // not important if it fails
   }
 }
 
@@ -154,53 +128,41 @@ function playTone(freq) {
 function endRound() {
   running = false;
   stopScheduler();
-  attempts += 1;
+  attempts++;
   localStorage.setItem("rlgl_attempts", attempts);
-  attemptsValue.textContent = attempts;
 
   if (distance > best) {
     best = Math.floor(distance);
     localStorage.setItem("rlgl_best", best);
-    bestValue.textContent = best + "%";
   }
+  updateStats();
 }
 
 function win() {
   distance = WIN_DISTANCE;
   runner.style.left = "100%";
-  distanceValue.textContent = "100%";
-  logLine("You crossed the line. Survived!", "is-good");
   endRound();
-
-  stamp.textContent = "SURVIVED";
-  stamp.classList.add("is-win");
-  overlay.classList.add("is-visible");
-  startBtn.textContent = "RUN AGAIN";
+  alert("you made it! you win");
+  startBtn.textContent = "play again";
 }
 
 function eliminate(reason) {
-  logLine(reason + " Eliminated.", "is-bad");
   endRound();
-
-  stamp.textContent = "ELIMINATED";
-  stamp.classList.remove("is-win");
-  overlay.classList.add("is-visible");
-  startBtn.textContent = "TRY AGAIN";
+  alert("eliminated - " + reason);
+  startBtn.textContent = "try again";
 }
 
-// ---------- start / restart ----------
+// ---------- start ----------
 
 function startGame() {
-  overlay.classList.remove("is-visible");
   distance = 0;
   holding = false;
   runner.style.left = "0%";
-  distanceValue.textContent = "0%";
-  log.innerHTML = "";
   running = true;
   lastFrame = performance.now();
   setLight("red");
   scheduleNextLight();
+  updateStats();
   requestAnimationFrame(frame);
 }
 
