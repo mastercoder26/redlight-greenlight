@@ -35,8 +35,8 @@ attemptsValue.textContent = attempts;
 function logLine(text, tone) {
   const p = document.createElement("p");
   const t = new Date();
-  const stamp = String(t.getMinutes()).padStart(2, "0") + ":" + String(t.getSeconds()).padStart(2, "0");
-  p.textContent = "[" + stamp + "] " + text;
+  const timestamp = String(t.getMinutes()).padStart(2, "0") + ":" + String(t.getSeconds()).padStart(2, "0");
+  p.textContent = "[" + timestamp + "] " + text;
   if (tone) p.className = tone;
   log.appendChild(p);
   log.scrollTop = log.scrollHeight;
@@ -127,3 +127,81 @@ function frame(now) {
 
   requestAnimationFrame(frame);
 }
+
+// ---------- sound (tiny WebAudio beeps, no assets) ----------
+
+let audioCtx = null;
+
+function playTone(freq) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = freq;
+    osc.type = "square";
+    gain.gain.value = 0.05;
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+    osc.stop(audioCtx.currentTime + 0.2);
+  } catch (err) {
+    // audio isn't essential, fail silently
+  }
+}
+
+// ---------- end states ----------
+
+function endRound() {
+  running = false;
+  stopScheduler();
+  attempts += 1;
+  localStorage.setItem("rlgl_attempts", attempts);
+  attemptsValue.textContent = attempts;
+
+  if (distance > best) {
+    best = Math.floor(distance);
+    localStorage.setItem("rlgl_best", best);
+    bestValue.textContent = best + "%";
+  }
+}
+
+function win() {
+  distance = WIN_DISTANCE;
+  runner.style.left = "100%";
+  distanceValue.textContent = "100%";
+  logLine("You crossed the line. Survived!", "is-good");
+  endRound();
+
+  stamp.textContent = "SURVIVED";
+  stamp.classList.add("is-win");
+  overlay.classList.add("is-visible");
+  startBtn.textContent = "RUN AGAIN";
+}
+
+function eliminate(reason) {
+  logLine(reason + " Eliminated.", "is-bad");
+  endRound();
+
+  stamp.textContent = "ELIMINATED";
+  stamp.classList.remove("is-win");
+  overlay.classList.add("is-visible");
+  startBtn.textContent = "TRY AGAIN";
+}
+
+// ---------- start / restart ----------
+
+function startGame() {
+  overlay.classList.remove("is-visible");
+  distance = 0;
+  holding = false;
+  runner.style.left = "0%";
+  distanceValue.textContent = "0%";
+  log.innerHTML = "";
+  running = true;
+  lastFrame = performance.now();
+  setLight("red");
+  scheduleNextLight();
+  requestAnimationFrame(frame);
+}
+
+startBtn.addEventListener("click", startGame);
