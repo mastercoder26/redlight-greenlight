@@ -82,3 +82,26 @@ function stopScheduler() {
   clearTimeout(lightTimer);
   clearTimeout(graceTimer);
 }
+
+// ---------- input ----------
+
+window.addEventListener("keydown", (e) => {
+  if (e.code !== "Space") return;
+  e.preventDefault();
+  if (holding) return;
+  holding = true;
+  stage.classList.add("is-holding");
+
+  if (!running) return;
+
+  if (light === "red") {
+    eliminate("You took off during red.");
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.code !== "Space") return;
+  e.preventDefault();
+  holding = false;
+  stage.classList.remove("is-holding");
+});
