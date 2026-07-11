@@ -1,7 +1,6 @@
 // ---------- refs ----------
 
 const lightEl = document.getElementById("light");
-const lightLabel = document.getElementById("light-label");
 const bulbs = {
   red: lightEl.querySelector(".bulb.red"),
   yellow: lightEl.querySelector(".bulb.yellow"),
@@ -13,9 +12,9 @@ const startBtn = document.getElementById("startBtn");
 
 // ---------- state ----------
 
-const SPEED = 26;          // % of track per second while running
-const GRACE_MS = 220;      // ms of leniency after light turns red
-const WIN_DISTANCE = 100;  // %
+const SPEED = 26;
+const GRACE_MS = 180;
+const WIN_DISTANCE = 100;
 
 let light = "red";
 let holding = false;
@@ -37,15 +36,18 @@ function updateStats() {
 
 // ---------- light scheduler ----------
 
-function randomDuration() {
-  return 1200 + Math.random() * 2600; // 1.2s - 3.8s
+function greenDuration() {
+  return 500 + Math.random() * 700; // 0.5s - 1.2s
+}
+
+function redDuration() {
+  return 1800 + Math.random() * 2200; // 1.8s - 4s
 }
 
 function showBulb(color) {
   bulbs.red.classList.toggle("on", color === "red");
   bulbs.yellow.classList.toggle("on", color === "yellow");
   bulbs.green.classList.toggle("on", color === "green");
-  lightLabel.textContent = color + " light";
 }
 
 function setLight(next) {
@@ -63,18 +65,21 @@ function setLight(next) {
 
 function scheduleNextLight() {
   clearTimeout(lightTimer);
-  lightTimer = setTimeout(() => {
-    if (light === "green") {
+
+  if (light === "green") {
+    lightTimer = setTimeout(() => {
       setLight("yellow");
       lightTimer = setTimeout(() => {
         setLight("red");
         scheduleNextLight();
-      }, 500);
-    } else {
+      }, 350);
+    }, greenDuration());
+  } else {
+    lightTimer = setTimeout(() => {
       setLight("green");
       scheduleNextLight();
-    }
-  }, randomDuration());
+    }, redDuration());
+  }
 }
 
 function stopScheduler() {
@@ -91,7 +96,7 @@ window.addEventListener("keydown", (e) => {
   holding = true;
 
   if (!running) return;
-  if (light === "red" || light === "yellow") eliminate("you took off on red");
+  if (light === "red") eliminate("you took off on red");
 });
 
 window.addEventListener("keyup", (e) => {
@@ -108,7 +113,7 @@ function frame(now) {
   const dt = Math.min(now - lastFrame, 60) / 1000;
   lastFrame = now;
 
-  if (holding && light === "green") {
+  if (holding) {
     distance = Math.min(WIN_DISTANCE, distance + SPEED * dt);
     runner.style.left = distance + "%";
     updateStats();
