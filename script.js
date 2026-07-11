@@ -105,3 +105,25 @@ window.addEventListener("keyup", (e) => {
   holding = false;
   stage.classList.remove("is-holding");
 });
+
+// ---------- main loop ----------
+
+function frame(now) {
+  if (!running) return;
+
+  const dt = Math.min(now - lastFrame, 60) / 1000;
+  lastFrame = now;
+
+  if (holding && light === "green") {
+    distance = Math.min(WIN_DISTANCE, distance + SPEED * dt);
+    runner.style.left = distance + "%";
+    distanceValue.textContent = Math.floor(distance) + "%";
+
+    if (distance >= WIN_DISTANCE) {
+      win();
+      return;
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
