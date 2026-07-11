@@ -270,3 +270,59 @@ kbd {
 .log p.is-good {
   color: #a9e0b6;
 }
+
+/* ---------- overlay ---------- */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(236, 230, 214, 0.94);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.stamp {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  border: 6px solid var(--red);
+  color: var(--red);
+  padding: 10px 22px;
+  transform: rotate(-8deg);
+  text-align: center;
+}
+
+.stamp.is-win {
+  border-color: var(--green);
+  color: var(--green);
+  transform: rotate(6deg);
+}
+
+.btn {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 12px 30px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+}
