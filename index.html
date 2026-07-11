@@ -3,59 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Red Light, Green Light</title>
-<meta name="description" content="A tiny hold-the-spacebar Red Light, Green Light game.">
+<title>red light green light</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<main class="poster">
+<h1>RED LIGHT, GREEN LIGHT</h1>
+<p>hold <b>SPACE</b> to run. dont move when its red or ur out.</p>
 
-  <header class="poster__head">
-    <h1>RED LIGHT<br>GREEN LIGHT</h1>
-    <p class="poster__sub">hold <kbd>SPACE</kbd> to run &mdash; freeze on red</p>
-  </header>
+<div id="light">RED LIGHT</div>
 
-  <section class="stage" id="stage">
-    <div class="doll" id="doll">
-      <div class="doll__head"></div>
-      <div class="doll__body"></div>
-    </div>
-    <div class="signal" id="signal">
-      <span class="signal__dot"></span>
-      <span class="signal__text" id="signalText">WAIT</span>
-    </div>
-  </section>
+<div id="track">
+  <div id="runner"></div>
+  <div id="finish">FINISH</div>
+</div>
 
-  <section class="track" id="track">
-    <div class="track__line"></div>
-    <div class="track__runner" id="runner"></div>
-    <div class="track__finish">GOAL</div>
-  </section>
+<p id="stats">distance: 0% &nbsp; best: 0% &nbsp; attempts: 0</p>
 
-  <section class="stats">
-    <div class="stat">
-      <span class="stat__label">distance</span>
-      <span class="stat__value" id="distanceValue">0%</span>
-    </div>
-    <div class="stat">
-      <span class="stat__label">best</span>
-      <span class="stat__value" id="bestValue">0%</span>
-    </div>
-    <div class="stat">
-      <span class="stat__label">attempts</span>
-      <span class="stat__value" id="attemptsValue">0</span>
-    </div>
-  </section>
-
-  <section class="log" id="log"></section>
-
-  <div class="overlay is-visible" id="overlay">
-    <div class="stamp is-win" id="stamp">READY?</div>
-    <button class="btn" id="startBtn">START</button>
-  </div>
-
-</main>
+<button id="startBtn">start</button>
 
 <script src="script.js"></script>
 </body>
