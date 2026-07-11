@@ -2,9 +2,9 @@
 
 A tiny browser game. No frameworks, no build step, just HTML/CSS/JS.
 
-Hold **SPACE** to run. A doll flips around at random — run while its back
-is turned (green), freeze the instant it looks at you (red). Twitch during
-red and you're out.
+Hold **SPACE** to run while the box says GREEN LIGHT. When it flips to
+RED LIGHT, let go. Keep holding (or start holding) during red and you're
+eliminated.
 
 ## Run it
 
