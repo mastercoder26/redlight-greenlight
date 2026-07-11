@@ -1,53 +1,68 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
-  margin: 40px;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: white;
   color: black;
 }
 
+.game {
+  text-align: center;
+}
+
 h1 {
   font-size: 22px;
-  margin-bottom: 5px;
+  margin: 0 0 5px;
+}
+
+p {
+  margin: 0 0 15px;
 }
 
 #light {
-  width: 220px;
-  height: 100px;
-  background: red;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-  text-align: center;
-  line-height: 100px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border: 2px solid black;
   margin-bottom: 15px;
-  border: 1px solid black;
 }
 
-#light.green {
-  background: green;
+.bulb {
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
+  background: #ccc;
 }
+
+.bulb.red.on { background: red; }
+.bulb.yellow.on { background: yellow; }
+.bulb.green.on { background: green; }
 
 #track {
   position: relative;
-  width: 400px;
+  width: 640px;
+  max-width: 90vw;
   height: 30px;
   border: 1px solid black;
   background: #eee;
-  margin-bottom: 10px;
+  margin: 0 auto 10px;
 }
 
 #runner {
   position: absolute;
   left: 0;
-  top: 0;
-  width: 20px;
-  height: 30px;
-  background: blue;
+  top: 3px;
+  width: 16px;
+  height: 24px;
 }
 
 #finish {
   position: absolute;
-  right: 3px;
+  right: 4px;
   top: 8px;
   font-size: 11px;
   font-weight: bold;

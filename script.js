@@ -1,6 +1,12 @@
 // ---------- refs ----------
 
 const lightEl = document.getElementById("light");
+const lightLabel = document.getElementById("light-label");
+const bulbs = {
+  red: lightEl.querySelector(".bulb.red"),
+  yellow: lightEl.querySelector(".bulb.yellow"),
+  green: lightEl.querySelector(".bulb.green"),
+};
 const runner = document.getElementById("runner");
 const stats = document.getElementById("stats");
 const startBtn = document.getElementById("startBtn");
@@ -35,11 +41,17 @@ function randomDuration() {
   return 1200 + Math.random() * 2600; // 1.2s - 3.8s
 }
 
+function showBulb(color) {
+  bulbs.red.classList.toggle("on", color === "red");
+  bulbs.yellow.classList.toggle("on", color === "yellow");
+  bulbs.green.classList.toggle("on", color === "green");
+  lightLabel.textContent = color + " light";
+}
+
 function setLight(next) {
   light = next;
-  lightEl.textContent = next === "green" ? "GREEN LIGHT" : "RED LIGHT";
-  lightEl.classList.toggle("green", next === "green");
-  playTone(next === "green" ? 660 : 220);
+  showBulb(next);
+  playTone(next === "green" ? 660 : next === "yellow" ? 440 : 220);
 
   if (next === "red") {
     clearTimeout(graceTimer);
@@ -52,8 +64,16 @@ function setLight(next) {
 function scheduleNextLight() {
   clearTimeout(lightTimer);
   lightTimer = setTimeout(() => {
-    setLight(light === "green" ? "red" : "green");
-    scheduleNextLight();
+    if (light === "green") {
+      setLight("yellow");
+      lightTimer = setTimeout(() => {
+        setLight("red");
+        scheduleNextLight();
+      }, 500);
+    } else {
+      setLight("green");
+      scheduleNextLight();
+    }
   }, randomDuration());
 }
 
@@ -71,7 +91,7 @@ window.addEventListener("keydown", (e) => {
   holding = true;
 
   if (!running) return;
-  if (light === "red") eliminate("you took off on red");
+  if (light === "red" || light === "yellow") eliminate("you took off on red");
 });
 
 window.addEventListener("keyup", (e) => {
