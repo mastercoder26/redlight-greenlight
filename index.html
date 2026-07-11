@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Light, Green Light</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="poster">
+
+  <header class="poster__head">
+    <h1>RED LIGHT<br>GREEN LIGHT</h1>
+    <p class="poster__sub">hold <kbd>SPACE</kbd> to run &mdash; freeze on red</p>
+  </header>
+
+  <section class="stage" id="stage">
+    <div class="doll" id="doll">
+      <div class="doll__head"></div>
+      <div class="doll__body"></div>
+    </div>
+    <div class="signal" id="signal">
+      <span class="signal__dot"></span>
+      <span class="signal__text" id="signalText">WAIT</span>
+    </div>
+  </section>
+
+  <section class="track" id="track">
+    <div class="track__line"></div>
+    <div class="track__runner" id="runner"></div>
+    <div class="track__finish">GOAL</div>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <span class="stat__label">distance</span>
+      <span class="stat__value" id="distanceValue">0%</span>
+    </div>
+    <div class="stat">
+      <span class="stat__label">best</span>
+      <span class="stat__value" id="bestValue">0%</span>
+    </div>
+    <div class="stat">
+      <span class="stat__label">attempts</span>
+      <span class="stat__value" id="attemptsValue">0</span>
+    </div>
+  </section>
+
+  <section class="log" id="log"></section>
+
+  <div class="overlay" id="overlay">
+    <div class="stamp" id="stamp">SURVIVED</div>
+    <button class="btn" id="startBtn">START</button>
+  </div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
