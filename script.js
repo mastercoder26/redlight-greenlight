@@ -191,7 +191,7 @@ function win() {
 
 function eliminate(reason) {
   endRound();
-  setStatus("eliminated — " + reason, "over");
+  setStatus("eliminated... " + reason, "over");
   alert("eliminated - " + reason);
   startBtn.textContent = "try again";
 }
