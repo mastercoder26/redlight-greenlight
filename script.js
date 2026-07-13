@@ -21,7 +21,7 @@ const timerEl = document.getElementById("timer");
 const SPEED = 26;
 const GRACE_MS = 180;
 const WIN_DISTANCE = 100;
-const ROUND_MS = 20000;
+const ROUND_MS = 30000;
 const TIMER_LOW_MS = 5000;
 
 let light = "red";
