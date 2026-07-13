@@ -6,8 +6,11 @@ const bulbs = {
   yellow: lightEl.querySelector(".bulb.yellow"),
   green: lightEl.querySelector(".bulb.green"),
 };
+const track = document.getElementById("track");
 const runner = document.getElementById("runner");
 const stats = document.getElementById("stats");
+const status = document.getElementById("status");
+const startFlash = document.getElementById("startFlash");
 const startBtn = document.getElementById("startBtn");
 
 // ---------- state ----------
@@ -32,6 +35,18 @@ updateStats();
 function updateStats() {
   stats.textContent =
     "distance: " + Math.floor(distance) + "%   best: " + best + "%   attempts: " + attempts;
+}
+
+function setStatus(text, kind) {
+  status.textContent = text;
+  status.classList.remove("playing", "over");
+  if (kind) status.classList.add(kind);
+}
+
+function showStartFlash() {
+  startFlash.classList.remove("show");
+  void startFlash.offsetWidth;
+  startFlash.classList.add("show");
 }
 
 // ---------- light scheduler ----------
@@ -153,6 +168,8 @@ function playTone(freq) {
 function endRound() {
   running = false;
   stopScheduler();
+  track.classList.remove("playing");
+  startBtn.disabled = false;
   attempts++;
   localStorage.setItem("rlgl_attempts", attempts);
 
@@ -167,12 +184,14 @@ function win() {
   distance = WIN_DISTANCE;
   runner.style.left = "100%";
   endRound();
+  setStatus("you win!", "over");
   alert("you made it! you win");
   startBtn.textContent = "play again";
 }
 
 function eliminate(reason) {
   endRound();
+  setStatus("eliminated — " + reason, "over");
   alert("eliminated - " + reason);
   startBtn.textContent = "try again";
 }
@@ -185,6 +204,11 @@ function startGame() {
   runner.style.left = "0%";
   running = true;
   lastFrame = performance.now();
+  track.classList.add("playing");
+  startBtn.disabled = true;
+  startBtn.textContent = "running...";
+  setStatus("● game started — wait for green, then hold SPACE", "playing");
+  showStartFlash();
   setLight("red");
   scheduleNextLight();
   updateStats();
