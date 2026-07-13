@@ -14,18 +14,22 @@ const startFlash = document.getElementById("startFlash");
 const startBtn = document.getElementById("startBtn");
 const messageEl = document.getElementById("message");
 const messageText = document.getElementById("messageText");
+const timerEl = document.getElementById("timer");
 
 // ---------- state ----------
 
 const SPEED = 26;
 const GRACE_MS = 180;
 const WIN_DISTANCE = 100;
+const ROUND_MS = 20000;
+const TIMER_LOW_MS = 5000;
 
 let light = "red";
 let holding = false;
 let running = false;
 let distance = 0;
 let lastFrame = 0;
+let roundEndsAt = 0;
 let best = Number(localStorage.getItem("rlgl_best") || 0);
 let attempts = Number(localStorage.getItem("rlgl_attempts") || 0);
 
@@ -36,10 +40,17 @@ let messageOpen = false;
 let ignoreHoldUntilKeyup = false;
 
 updateStats();
+updateTimerDisplay(ROUND_MS);
 
 function updateStats() {
   stats.textContent =
     "distance: " + Math.floor(distance) + "%   best: " + best + "%   attempts: " + attempts;
+}
+
+function updateTimerDisplay(msLeft) {
+  const clamped = Math.max(0, msLeft);
+  timerEl.textContent = "time: " + (clamped / 1000).toFixed(1) + "s";
+  timerEl.classList.toggle("low", clamped > 0 && clamped <= TIMER_LOW_MS);
 }
 
 function setStatus(text, kind) {
@@ -190,6 +201,13 @@ window.addEventListener("keyup", (e) => {
 function frame(now) {
   if (!running) return;
 
+  const msLeft = roundEndsAt - now;
+  updateTimerDisplay(msLeft);
+  if (msLeft <= 0) {
+    eliminate("out of time");
+    return;
+  }
+
   const dt = Math.min(now - lastFrame, 60) / 1000;
   lastFrame = now;
 
@@ -269,6 +287,8 @@ function startGame() {
   runner.style.left = "0%";
   running = true;
   lastFrame = performance.now();
+  roundEndsAt = lastFrame + ROUND_MS;
+  updateTimerDisplay(ROUND_MS);
   track.classList.add("playing");
   startBtn.disabled = true;
   startBtn.textContent = "running...";

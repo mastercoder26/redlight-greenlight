@@ -18,6 +18,17 @@ h1 {
   margin: 0 0 5px;
 }
 
+#timer {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+#timer.low {
+  color: #8b0000;
+}
+
 p {
   margin: 0 0 15px;
 }

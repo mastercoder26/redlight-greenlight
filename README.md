@@ -2,9 +2,10 @@
 
 A tiny browser game. No frameworks, just HTML/CSS/JS.
 
-Hold **SPACE** to run while the box says GREEN LIGHT. When it flips to
+Hold **O** to run while the box says GREEN LIGHT. When it flips to
 RED LIGHT, let go. Keep holding (or start holding) during red and you're
-eliminated.
+eliminated. Hover the start button and press **O** to start, or press **O**
+to dismiss win/eliminate messages.
 This was inspired by Squid Game's red light, green light Game on Netflix. However, it is not as high stakes as no life is on the line here.
 
 ## Run it
