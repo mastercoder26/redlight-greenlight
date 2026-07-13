@@ -207,7 +207,7 @@ function startGame() {
   track.classList.add("playing");
   startBtn.disabled = true;
   startBtn.textContent = "running...";
-  setStatus("● game started — wait for green, then hold SPACE", "playing");
+  setStatus("● game started! wait for green, then hold SPACE", "playing");
   showStartFlash();
   setLight("red");
   scheduleNextLight();
