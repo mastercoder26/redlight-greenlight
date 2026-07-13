@@ -10,7 +10,7 @@
 
 <div class="game">
 <h1>RED LIGHT, GREEN LIGHT</h1>
-<p>hold <b>SPACE</b> to run. dont stop on red. people have died over this be careful</p>
+<p>hold <b>SPACE</b> to run. dont stop on red. people have died over this so be careful</p>
 
 <div id="light">
   <div class="bulb red on"></div>
@@ -34,9 +34,14 @@
 </div>
 
 <p id="stats">distance: 0% &nbsp; best: 0% &nbsp; attempts: 0</p>
-<p id="status">press start to play</p>
+<p id="status">hover start + press SPACE, or click</p>
 
 <button id="startBtn">start</button>
+
+<div id="message" hidden>
+  <p id="messageText"></p>
+  <p class="messageHint">press SPACE to continue</p>
+</div>
 </div>
 
 <script src="script.js"></script>

@@ -12,6 +12,8 @@ const stats = document.getElementById("stats");
 const status = document.getElementById("status");
 const startFlash = document.getElementById("startFlash");
 const startBtn = document.getElementById("startBtn");
+const messageEl = document.getElementById("message");
+const messageText = document.getElementById("messageText");
 
 // ---------- state ----------
 
@@ -29,6 +31,9 @@ let attempts = Number(localStorage.getItem("rlgl_attempts") || 0);
 
 let lightTimer = null;
 let graceTimer = null;
+let startBtnHovered = false;
+let messageOpen = false;
+let ignoreHoldUntilKeyup = false;
 
 updateStats();
 
@@ -104,19 +109,66 @@ function stopScheduler() {
 
 // ---------- input ----------
 
+function canStart() {
+  return !running && !messageOpen && !startBtn.disabled;
+}
+
+function tryStartGame() {
+  if (!canStart()) return false;
+  startGame();
+  return true;
+}
+
+function showMessage(text) {
+  messageText.textContent = text;
+  messageEl.hidden = false;
+  messageOpen = true;
+}
+
+function dismissMessage() {
+  messageEl.hidden = true;
+  messageOpen = false;
+}
+
+startBtn.addEventListener("mouseenter", () => {
+  startBtnHovered = true;
+  if (canStart()) startBtn.focus();
+});
+
+startBtn.addEventListener("mouseleave", () => {
+  startBtnHovered = false;
+});
+
 window.addEventListener("keydown", (e) => {
   if (e.code !== "Space") return;
   e.preventDefault();
-  if (holding) return;
-  holding = true;
 
-  if (!running) return;
+  if (messageOpen) {
+    dismissMessage();
+    ignoreHoldUntilKeyup = true;
+    return;
+  }
+
+  if (!running) {
+    if (startBtnHovered) {
+      ignoreHoldUntilKeyup = true;
+      tryStartGame();
+    }
+    return;
+  }
+
+  if (ignoreHoldUntilKeyup || holding) return;
+  holding = true;
   if (light === "red") eliminate("you took off on red");
 });
 
 window.addEventListener("keyup", (e) => {
   if (e.code !== "Space") return;
   e.preventDefault();
+  if (ignoreHoldUntilKeyup) {
+    ignoreHoldUntilKeyup = false;
+    return;
+  }
   holding = false;
 });
 
@@ -185,14 +237,14 @@ function win() {
   runner.style.left = "100%";
   endRound();
   setStatus("you win!", "over");
-  alert("you made it! you win");
+  showMessage("you made it! you win");
   startBtn.textContent = "play again";
 }
 
 function eliminate(reason) {
   endRound();
   setStatus("eliminated... " + reason, "over");
-  alert("eliminated - " + reason);
+  showMessage("eliminated - " + reason);
   startBtn.textContent = "try again";
 }
 
@@ -215,4 +267,4 @@ function startGame() {
   requestAnimationFrame(frame);
 }
 
-startBtn.addEventListener("click", startGame);
+startBtn.addEventListener("click", tryStartGame);

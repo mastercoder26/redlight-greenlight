@@ -127,3 +127,31 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+#message {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+}
+
+#message[hidden] {
+  display: none;
+}
+
+#messageText {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.messageHint {
+  font-size: 13px;
+  margin: 0;
+  color: #444;
+}
