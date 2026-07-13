@@ -125,9 +125,22 @@ function showMessage(text) {
   messageOpen = true;
 }
 
+function isStartArmed() {
+  return startBtnHovered || startBtn.matches(":hover") || document.activeElement === startBtn;
+}
+
+function syncStartHover() {
+  if (startBtn.matches(":hover")) {
+    startBtnHovered = true;
+    if (canStart()) startBtn.focus();
+  }
+}
+
 function dismissMessage() {
   messageEl.hidden = true;
   messageOpen = false;
+  // Overlay removal doesn't fire mouseenter if the cursor is already over start
+  syncStartHover();
 }
 
 startBtn.addEventListener("mouseenter", () => {
@@ -140,7 +153,7 @@ startBtn.addEventListener("mouseleave", () => {
 });
 
 window.addEventListener("keydown", (e) => {
-  if (e.code !== "Space") return;
+  if (e.code !== "KeyO" || e.repeat) return;
   e.preventDefault();
 
   if (messageOpen) {
@@ -150,7 +163,7 @@ window.addEventListener("keydown", (e) => {
   }
 
   if (!running) {
-    if (startBtnHovered) {
+    if (isStartArmed()) {
       ignoreHoldUntilKeyup = true;
       tryStartGame();
     }
@@ -163,7 +176,7 @@ window.addEventListener("keydown", (e) => {
 });
 
 window.addEventListener("keyup", (e) => {
-  if (e.code !== "Space") return;
+  if (e.code !== "KeyO") return;
   e.preventDefault();
   if (ignoreHoldUntilKeyup) {
     ignoreHoldUntilKeyup = false;
@@ -259,7 +272,7 @@ function startGame() {
   track.classList.add("playing");
   startBtn.disabled = true;
   startBtn.textContent = "running...";
-  setStatus("● game started! wait for green, then hold SPACE", "playing");
+  setStatus("● game started! wait for green, then hold O", "playing");
   showStartFlash();
   setLight("red");
   scheduleNextLight();
